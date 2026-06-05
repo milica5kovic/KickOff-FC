@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ycjjg5gkkkdj" path="res://assets/art/characters/soccer-player.png" id="1_3etf2"]
 [ext_resource type="Script" uid="uid://6ic0ust87mec" path="res://Scenes/Characters/Player.cs" id="1_40svl"]
+[ext_resource type="Script" uid="uid://cvdg5mffbopdj" path="res://Utils/Keys.cs" id="3_al8ar"]
 
 [sub_resource type="Animation" id="Animation_3etf2"]
 resource_name = "Idle"
@@ -65,12 +66,15 @@ _data = {
 radius = 4.0
 height = 18.0
 
-[node name="Player" type="CharacterBody2D" unique_id=120457864 node_paths=PackedStringArray("AnimationPlayer")]
+[node name="Player" type="CharacterBody2D" unique_id=120457864 node_paths=PackedStringArray("Keys", "AnimationPlayer", "PlayerSprite")]
 script = ExtResource("1_40svl")
 speed = 200.0
+Keys = NodePath("Keys")
 AnimationPlayer = NodePath("AnimationPlayer")
+PlayerSprite = NodePath("PlayerSprite")
 
 [node name="PlayerSprite" type="Sprite2D" parent="." unique_id=1608458066]
+unique_name_in_owner = true
 y_sort_enabled = true
 texture = ExtResource("1_3etf2")
 centered = false
@@ -88,3 +92,6 @@ autoplay = &"Idle"
 position = Vector2(0, -3)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_gy20a")
+
+[node name="Keys" type="Node" parent="." unique_id=180394103]
+script = ExtResource("3_al8ar")
