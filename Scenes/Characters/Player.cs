@@ -1,19 +1,32 @@
+using System;
 using System.Numerics;
 using Godot;
 using Utils;
 using Vector2 = Godot.Vector2;
 
+
+
 public partial class Player : CharacterBody2D
 {
-
+	const int DurationTackle = 200;
 	public enum ControlScheme
 	{
 		CPU,
 		P1,
 		P2
 	}
+
+	public enum State
+	{
+		Moving,
+		Tackling,
+		
+	}
+	
 	[Export] public float speed;
 	[Export] public Vector2 heading = Vector2.Right;
+	[Export] public State state = State.Moving;
+	public ulong timeStartTackling = Time.GetTicksMsec();
 	[Export] public Keys Keys { get; set; }
 	[Export] public ControlScheme Control { get; set; }
 	[Export] public AnimationPlayer AnimationPlayer { get; set; }
@@ -26,9 +39,27 @@ public partial class Player : CharacterBody2D
 		}
 		else
 		{
-			HandleHumanMovement();
+			if (state == State.Moving)
+			{
+				HandleHumanMovement();
+				if (Velocity.X != 0 && Keys.IsActionJustPressed(Control, Keys.Action.SHOOT))
+				{
+					state  = State.Tackling;
+					timeStartTackling = Time.GetTicksMsec();
+				}
+				SetMovementAnimation();
+			}
+			else if (state == State.Tackling)
+			{
+				AnimationPlayer.Play("Tackle");
+				if (Time.GetTicksMsec() - timeStartTackling > DurationTackle)
+				{
+					state = State.Moving;
+				}
+			}
+			
 		}
-		SetMovementAnimation();
+		
 		SetHeading();
 		FlipPlayer();
 	}
