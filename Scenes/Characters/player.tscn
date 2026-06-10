@@ -3,6 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://ycjjg5gkkkdj" path="res://assets/art/characters/soccer-player.png" id="1_3etf2"]
 [ext_resource type="Script" uid="uid://6ic0ust87mec" path="res://Scenes/Characters/Player.cs" id="1_40svl"]
 [ext_resource type="Script" uid="uid://cvdg5mffbopdj" path="res://Utils/Keys.cs" id="3_al8ar"]
+[ext_resource type="Script" uid="uid://c71k1pi0yctcm" path="res://Scenes/Characters/PlayerStateFactory.cs" id="4_khnq4"]
+[ext_resource type="Script" uid="uid://cvqkvelgt3i03" path="res://Scenes/Characters/CharacterStates/MovingState.cs" id="5_utp2y"]
+[ext_resource type="Script" uid="uid://ds8fqxjokik2l" path="res://Scenes/Characters/CharacterStates/TacklingState.cs" id="6_gdgf0"]
 
 [sub_resource type="Animation" id="Animation_3etf2"]
 resource_name = "Idle"
@@ -39,7 +42,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_gy20a"]
 resource_name = "Tackle"
-length = 0.1
+length = 0.14285715
 loop_mode = 1
 step = 0.15
 tracks/0/type = "value"
@@ -114,3 +117,12 @@ shape = SubResource("CapsuleShape2D_gy20a")
 
 [node name="Keys" type="Node" parent="." unique_id=180394103]
 script = ExtResource("3_al8ar")
+
+[node name="PlayerStateFactory" type="Node" parent="." unique_id=79638610]
+script = ExtResource("4_khnq4")
+
+[node name="MovingState" type="Node" parent="PlayerStateFactory" unique_id=1890242399]
+script = ExtResource("5_utp2y")
+
+[node name="TacklingState" type="Node" parent="PlayerStateFactory" unique_id=601636046]
+script = ExtResource("6_gdgf0")

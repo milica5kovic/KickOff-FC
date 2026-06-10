@@ -1,6 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
+
 namespace Utils
 {
 	public partial class Keys : Node
@@ -15,7 +16,7 @@ namespace Utils
 			PASS
 		}
 
-		Dictionary<Player.ControlScheme, Dictionary<Action, string>> actionsMap = new()
+		public Dictionary<Player.ControlScheme, Dictionary<Action, string>> actionsMap = new()
 		{
 			{
 				Player.ControlScheme.P1, new Dictionary<Action, string>
