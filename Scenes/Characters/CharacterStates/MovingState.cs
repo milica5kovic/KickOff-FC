@@ -15,32 +15,21 @@ public partial class MovingState : PlayerState
 
 	public override void _PhysicsProcess(double delta)
 	{
+		base._PhysicsProcess(delta);
 		if (Player.Control == Player.ControlScheme.CPU)
 			return;
 		HandleHumanMovement();
-		if (!Player.IsTackling)
-		{
-			SetMovementAnimation();
-		}
+		Player.SetMovementAnimation();
 		Player.SetHeading();
 	}
 
 	private void HandleHumanMovement()
 	{
 		Player.Velocity = Player.Keys.GetInput(Player.Control) * Player.speed;
-
 		if (_shootPressed)
 		{
 			_shootPressed = false;
 			EmitSignal(SignalName.StateTransitionRequested, (int)Player.State.Tackling);
 		}
-	}
-
-	private void SetMovementAnimation()
-	{
-		if (Player.Velocity.Length() > 0.1f)
-			Player.AnimationPlayer.Play("run");
-		else
-			Player.AnimationPlayer.Play("Idle");
 	}
 }

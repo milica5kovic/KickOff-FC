@@ -4,7 +4,7 @@ using Utils;
 public partial class Player : CharacterBody2D
 {
 	public enum ControlScheme { CPU, P1, P2 }
-	public enum State { Moving, Tackling }
+	public enum State { Moving, Tackling, Recovering }
 
 	[Export] public float speed;
 	[Export] public Vector2 heading = Vector2.Right;
@@ -15,7 +15,6 @@ public partial class Player : CharacterBody2D
 
 	public PlayerState currentState;
 	public PlayerStateFactory stateFactory;
-	public bool IsTackling = false;
 
 	public override void _Ready()
 	{
@@ -25,29 +24,31 @@ public partial class Player : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		SetHeading();
 		FlipPlayer();
 		MoveAndSlide();
 	}
 
 	public void SwitchState(State newState)
 	{
-		IsTackling = newState == State.Tackling;
-
 		if (currentState != null)
 		{
 			currentState.StateTransitionRequested -= SwitchState;
-			currentState.SetPhysicsProcess(false);
-			currentState.SetProcess(false);
-			currentState.SetProcessInput(false);
 			currentState.QueueFree();
 		}
 
 		currentState = stateFactory.GetState(newState);
-		currentState.Name = "PlayerStateMachine:" + newState.ToString();
-		currentState.StateTransitionRequested += SwitchState;
 		currentState.Setup(this);
+		currentState.StateTransitionRequested += SwitchState;
+		currentState.Name = "PlayerStateMachine:" + newState.ToString();
 		CallDeferred("add_child", currentState);
+	}
+
+	public void SetMovementAnimation()
+	{
+		if (Velocity.Length() > 0.1f)
+			AnimationPlayer.Play("run");
+		else
+			AnimationPlayer.Play("Idle");
 	}
 
 	public void SetHeading()
@@ -58,6 +59,9 @@ public partial class Player : CharacterBody2D
 
 	public void FlipPlayer()
 	{
-		PlayerSprite.FlipH = heading == Vector2.Left;
+		if (heading == Vector2.Right)
+			PlayerSprite.FlipH = false;
+		else if (heading == Vector2.Left)
+			PlayerSprite.FlipH = true;
 	}
 }

@@ -2,21 +2,33 @@ using Godot;
 
 public partial class TacklingState : PlayerState
 {
-	const int DurationTackle = 200;
-	public ulong timeStartTackle = ulong.MaxValue;
+	const int DurationPriorRecovery = 200;
+	const float GroundFriction = 250.0f;
+
+	private bool _isTackleComplete = false;
+	private ulong _timeFinishTackle = 0;
 
 	public override void OnEnter()
 	{
-		timeStartTackle = Time.GetTicksMsec();
 		Player.AnimationPlayer.Play("Tackle");
+		_isTackleComplete = false;
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (timeStartTackle == ulong.MaxValue) return;
-		if (Time.GetTicksMsec() - timeStartTackle > DurationTackle)
+		base._PhysicsProcess(delta);
+		if (!_isTackleComplete)
 		{
-			EmitSignal(SignalName.StateTransitionRequested, (int)Player.State.Moving);
+			Player.Velocity = Player.Velocity.MoveToward(Vector2.Zero, (float)delta * GroundFriction);
+			if (Player.Velocity == Vector2.Zero)
+			{
+				_isTackleComplete = true;
+				_timeFinishTackle = Time.GetTicksMsec();
+			}
+		}
+		else if (Time.GetTicksMsec() - _timeFinishTackle > DurationPriorRecovery)
+		{
+			EmitSignal(SignalName.StateTransitionRequested, (int)Player.State.Recovering);
 		}
 	}
 }
